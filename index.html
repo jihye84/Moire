@@ -10,6 +10,13 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://jihye84.github.io/Moire/">
 <meta name="theme-color" content="#0e1320">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="무아레 정원">
 <script>
 /* 카카오톡·네이버·페이스북·인스타그램 등 인앱 브라우저에서 열리면 기본 브라우저로 다시 열기 */
 (function () {
@@ -60,7 +67,7 @@
   --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
   --dockH:120px;
-  --plateB:72px;
+  --plateB:40px;
   --st:env(safe-area-inset-top,0px);
   --sb:env(safe-area-inset-bottom,0px);
   color-scheme:dark;
@@ -77,13 +84,8 @@ button{font:inherit;color:inherit}
 .stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .fail{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;background:var(--bg)}
 
-/* 이름표 */
-.plate{position:fixed;left:16px;top:calc(16px + var(--st));display:flex;align-items:center;gap:12px;max-width:calc(100% - 32px);padding:8px 8px 8px 14px;background:var(--glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--hair);border-radius:6px;z-index:5}
-.plate .t{min-width:0;display:flex;flex-direction:column}
-.plate h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:19px;letter-spacing:.02em;white-space:nowrap}
-.plate .nm{color:var(--accent);font-family:var(--f-display);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.iconbtn{appearance:none;flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--hair);background:var(--panel-2);cursor:pointer;display:grid;place-items:center;font-family:var(--f-display);font-size:17px;color:var(--fg)}
-.iconbtn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
+/* 무늬 이름: 투명한 바탕에 글자만 */
+.label{position:fixed;left:16px;top:calc(14px + var(--st));z-index:5;max-width:calc(100% - 32px);font-family:var(--f-display);font-size:15px;letter-spacing:.04em;color:var(--fg);opacity:.86;text-shadow:0 0 4px #000,0 0 10px #000,0 1px 2px #000;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .35s}
 
 .hint{position:fixed;left:16px;right:16px;bottom:calc(var(--dockH) + 10px);display:flex;justify-content:center;pointer-events:none;z-index:4;transition:opacity .4s}
 .hint span{background:var(--glass);color:#d4cec2;font-size:12px;padding:5px 10px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
@@ -98,11 +100,14 @@ button{font:inherit;color:inherit}
 .pre span{font-family:var(--f-display);font-size:12.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .pre[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
 .pre[aria-pressed="true"] span{color:var(--accent)}
+.sidebtns{display:flex;gap:8px}
+.sidebtns .adjbtn{flex:1}
 .adjbtn{appearance:none;border:1px solid var(--hair);background:var(--panel-2);border-radius:5px;cursor:pointer;padding:0 16px;min-width:76px;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:13px}
 .adjbtn svg{width:20px;height:20px}
 .adjbtn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
 
 /* 서랍: 조절 */
+/* 서랍 */
 .drawer{position:fixed;z-index:7;background:var(--panel);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--hair);border-radius:8px;overflow:hidden;
   right:16px;top:calc(16px + var(--st));width:340px;max-height:calc(100% - var(--dockH) - var(--st) - 28px)}
 .dw{padding:14px 16px 16px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;transform-origin:top left}
@@ -139,41 +144,47 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:0}
 
 /* 좁은 화면 */
 @media (max-width:699px){
+  .sidebtns{flex-direction:column;gap:6px}
+  .sidebtns .adjbtn{min-height:0;gap:2px}
   .presets{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
   .pre canvas{max-height:40px}
   .pre span{font-size:11.5px}
   .adjbtn{min-width:60px;padding:0 10px}
   .drawer{left:10px;right:10px;width:auto;top:auto;bottom:calc(var(--dockH) + 8px);max-height:calc(100% - var(--dockH) - var(--plateB) - 18px)}
-  .plate h1{font-size:17px}
 }
 /* 낮고 넓은 화면(가로 폰, 작은 창): 서랍을 두 칸으로 */
 @media (min-width:700px) and (max-height:620px){
   .drawer{width:min(620px,calc(100% - 32px));top:calc(var(--plateB) + 10px);max-height:calc(100% - var(--dockH) - var(--plateB) - 22px)}
   .dw{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:20px}
   .pre canvas{max-height:36px}
-  .plate{padding:6px 6px 6px 12px}
-  .plate h1{font-size:16px}
 }
 @media (max-width:699px) and (max-height:620px){
   .dw{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:14px}
   .row{grid-template-columns:44px minmax(0,1fr) 54px;gap:6px}
 }
 @media (max-height:460px){
+  .dw{padding:10px 12px 12px;row-gap:8px}
+  .grp{gap:6px}
+  .lab{display:none}
+  .seg button,.btn{min-height:30px;padding-block:5px}
+  .row{min-height:24px}
+  .readout{padding:6px 10px}
+  .readout .eq{display:none}
+  .readout .big{font-size:14px}
+  .closebtn{width:30px;height:30px}
   .presets{grid-template-columns:repeat(8,minmax(0,1fr))}
   .pre span{display:none}
   .pre canvas{max-height:30px}
   .dock{padding-top:6px;padding-bottom:calc(6px + var(--sb))}
 }
 .hbtns{display:flex;gap:8px}
-.infob{display:none;font-family:var(--f-display);color:var(--fg)}
-/* 낮은 화면에서 서랍이 열리면 이름표를 비켜 공간 확보 */
-@media (max-height:700px){
-  body.dopen .plate{visibility:hidden}
-  body.dopen .infob{display:inline-block}
-  body.dopen .drawer{max-height:calc(100% - var(--dockH) - var(--st) - 22px)}
-}
-@media (max-height:700px) and (min-width:700px){ body.dopen .drawer{top:calc(10px + var(--st))} }
-@media (prefers-reduced-motion:reduce){.hint{transition:none}}
+.infob{font-family:var(--f-display);color:var(--fg)}
+.dock{transition:transform .35s ease}
+body.bare .dock{transform:translateY(calc(100% + 2px));pointer-events:none}
+body.bare .label,body.bare .hint{opacity:0}
+.toast{position:fixed;left:50%;bottom:calc(24px + var(--sb));transform:translateX(-50%);z-index:9;background:var(--glass);color:#d4cec2;font-size:12.5px;padding:7px 12px;border-radius:999px;pointer-events:none;opacity:0;transition:opacity .4s;white-space:nowrap}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.hint,.dock,.label,.toast{transition:none}}
 </style>
 </head>
 <body>
@@ -182,29 +193,30 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:0}
   <canvas id="gl" aria-label="겹쳐진 두 장의 무늬 필름이 만드는 무아레"></canvas>
 </main>
 
-<header class="plate">
-  <div class="t">
-    <h1>무아레 정원</h1>
-    <div class="nm" id="presetName">비튼 줄무늬</div>
-  </div>
-  <button class="iconbtn" id="bInfo" aria-expanded="false" aria-controls="sheet" aria-label="이 무늬 설명 보기">i</button>
-</header>
+<div class="label" id="presetName" aria-live="polite">비튼 줄무늬</div>
 
-<div class="hint" id="hint"><span>끌기: 위 필름 이동 · 두 손가락: 회전·확대 · 휠: 회전 (Shift+휠: 확대)</span></div>
+<div class="hint" id="hint"><span>끌기: 위 필름 이동 · 휠: 회전 (Shift+휠: 확대) · 클릭: 메뉴 숨기기</span></div>
 
+<div class="toast" id="toast"></div>
 <nav class="dock" id="dock" aria-label="갤러리">
   <div class="dock-in">
     <div class="presets" id="presets"></div>
-    <button class="adjbtn" id="bAdj" aria-expanded="false" aria-controls="drawer">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
-      <span>조절</span>
-    </button>
+    <div class="sidebtns">
+      <button class="adjbtn" id="bAdj" aria-expanded="false" aria-controls="drawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+        <span>조절</span>
+      </button>
+      <button class="adjbtn" id="bHide" aria-label="메뉴 모두 숨기기">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        <span>숨기기</span>
+      </button>
+    </div>
   </div>
 </nav>
 
 <aside class="drawer" id="drawer" aria-label="조절" hidden>
   <div class="dw" id="dw">
-    <div class="dw-head"><h2>조절</h2><span class="hbtns"><button class="closebtn infob" id="bInfo2" aria-label="이 무늬 설명 보기">i</button><button class="closebtn" id="bAdjClose" aria-label="조절 닫기">×</button></span></div>
+    <div class="dw-head"><h2>조절</h2><span class="hbtns"><button class="closebtn infob" id="bInfo2" aria-expanded="false" aria-controls="sheet" aria-label="이 무늬 설명 보기">i</button><button class="closebtn" id="bAdjClose" aria-label="조절 닫기">×</button></span></div>
     <div class="grp">
       <div class="lab">보는 방식</div>
       <div class="seg" id="modeSeg" role="group" aria-label="보는 방식">
@@ -221,6 +233,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:0}
         <button class="btn" id="bDrift" aria-pressed="true">흐르기</button>
         <button class="btn" id="bCenter">가운데로</button>
         <button class="btn" id="bTilt" aria-pressed="false" hidden>기울여 보기</button>
+        <button class="btn" id="bFull" aria-pressed="false" hidden>전체 화면</button>
       </div>
     </div>
     <div class="grp">
@@ -577,7 +590,7 @@ syncDrift();
 $('bCenter').addEventListener('click', () => { tween = {from:{...S}, to:{ox:0, oy:0}, t0:performance.now(), dur:600}; });
 
 /* ---------- 서랍 ---------- */
-const drawer = $('drawer'), bAdj = $('bAdj'), sheet = $('sheet'), scrim = $('scrim'), bInfo = $('bInfo');
+const drawer = $('drawer'), bAdj = $('bAdj'), sheet = $('sheet'), scrim = $('scrim'), bInfo = $('bInfo2');
 function setDrawer(open){
   drawer.hidden = !open; bAdj.setAttribute('aria-expanded', open ? 'true' : 'false'); document.body.classList.toggle('dopen', open);
   if (open) { setSheet(false); fitAll(); }
@@ -588,10 +601,9 @@ function setSheet(open){
 }
 bAdj.addEventListener('click', () => setDrawer(drawer.hidden));
 $('bAdjClose').addEventListener('click', () => { setDrawer(false); bAdj.focus(); });
-bInfo.addEventListener('click', () => setSheet(sheet.hidden));
 $('bInfoClose').addEventListener('click', () => { setSheet(false); bInfo.focus(); });
 scrim.addEventListener('click', () => setSheet(false));
-$('bInfo2').addEventListener('click', () => { setSheet(true); });
+bInfo.addEventListener('click', () => setSheet(true));
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (!sheet.hidden) setSheet(false); else if (!drawer.hidden) setDrawer(false);
@@ -609,7 +621,7 @@ function fit(outer, inner){
 function fitAll(){
   const dh = $('dock').getBoundingClientRect().height;
   root.style.setProperty('--dockH', Math.ceil(dh) + 'px');
-  root.style.setProperty('--plateB', Math.ceil(document.querySelector('.plate').getBoundingClientRect().bottom) + 'px');
+  root.style.setProperty('--plateB', Math.ceil(document.querySelector('.label').getBoundingClientRect().bottom) + 'px');
   fit(drawer, $('dw')); fit(sheet, $('sh'));
 }
 new ResizeObserver(fitAll).observe($('dock'));
@@ -617,11 +629,13 @@ window.addEventListener('resize', fitAll);
 
 /* ---------- 손가락·마우스 ---------- */
 const hintEl = $('hint');
-if (matchMedia('(pointer:coarse)').matches) hintEl.querySelector('span').textContent = '끌기: 위 필름 이동 · 두 손가락: 회전·확대';
+if (matchMedia('(pointer:coarse)').matches) hintEl.querySelector('span').textContent = '끌기: 위 필름 이동 · 두 손가락: 회전·확대 · 톡: 메뉴 숨기기';
 const pts = new Map();
 let g0 = null;
 function hush(){ pauseDriftUntil = performance.now() + 2500; tween = null; hintEl.classList.add('gone'); }
+let tapStart = null;
 stage.addEventListener('pointerdown', e => {
+  tapStart = pts.size === 0 ? {x:e.clientX, y:e.clientY, t:performance.now(), id:e.pointerId, multi:false} : (tapStart && (tapStart.multi = true), tapStart);
   stage.setPointerCapture(e.pointerId);
   pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
   hush(); g0 = snapshot();
@@ -639,7 +653,12 @@ stage.addEventListener('pointermove', e => {
   }
   syncUI(); dirty = true;
 });
-function endPt(e){ pts.delete(e.pointerId); g0 = pts.size >= 2 ? snapshot() : null; }
+function endPt(e){
+  if (e.type === 'pointerup' && tapStart && tapStart.id === e.pointerId && !tapStart.multi &&
+      Math.hypot(e.clientX - tapStart.x, e.clientY - tapStart.y) < 8 && performance.now() - tapStart.t < 350) onTap();
+  if (pts.size <= 1) tapStart = null;
+  pts.delete(e.pointerId); g0 = pts.size >= 2 ? snapshot() : null;
+}
 stage.addEventListener('pointerup', endPt);
 stage.addEventListener('pointercancel', endPt);
 function snapshot(){
@@ -653,6 +672,45 @@ stage.addEventListener('wheel', e => {
   else S.ang = clamp(S.ang - e.deltaY * 0.004, -45, 45);
   syncUI(); dirty = true;
 }, {passive:false});
+
+
+/* ---------- 메뉴 숨기기 ---------- */
+const toastEl = $('toast'); let toastT = 0;
+function toast(msg){ toastEl.textContent = msg; toastEl.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('on'), 2200); }
+let toldBare = false;
+function setBare(on){
+  document.body.classList.toggle('bare', on);
+  if (on) { setDrawer(false); setSheet(false); if (!toldBare) { toast('화면을 톡 누르면 메뉴가 다시 나와요'); toldBare = true; } }
+}
+function onTap(){
+  if (!sheet.hidden) return setSheet(false);
+  if (!drawer.hidden) return setDrawer(false);
+  setBare(!document.body.classList.contains('bare'));
+}
+$('bHide').addEventListener('click', () => setBare(true));
+
+/* ---------- 전체 화면 ---------- */
+const fsEl = document.documentElement;
+const canFS = !!(fsEl.requestFullscreen || fsEl.webkitRequestFullscreen);
+const isFS = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+function enterFS(){
+  try {
+    const p = fsEl.requestFullscreen ? fsEl.requestFullscreen({navigationUI:'hide'}) : fsEl.webkitRequestFullscreen();
+    if (p && p.catch) p.catch(() => {});
+  } catch(e) {}
+}
+function exitFS(){ try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch(e) {} }
+const bFull = $('bFull');
+if (canFS) bFull.hidden = false;
+function syncFS(){ const on = isFS(); bFull.setAttribute('aria-pressed', on ? 'true' : 'false'); bFull.textContent = on ? '전체 화면 끄기' : '전체 화면'; setTimeout(fitAll, 120); }
+document.addEventListener('fullscreenchange', syncFS); document.addEventListener('webkitfullscreenchange', syncFS);
+bFull.addEventListener('click', () => isFS() ? exitFS() : enterFS());
+/* 처음 화면을 만지는 순간 전체 화면으로 (브라우저는 사용자의 터치가 있어야 허락해요) */
+let autoFSDone = false;
+document.addEventListener('pointerdown', () => {
+  if (autoFSDone) return; autoFSDone = true;
+  if (canFS && !isFS() && matchMedia('(pointer:coarse)').matches) enterFS();
+}, {capture:true});
 
 /* ---------- 폰 기울이기 ---------- */
 const bTilt = $('bTilt');
