@@ -772,7 +772,9 @@ $('bHide').addEventListener('click', () => setBare(true));
 
 /* ---------- 전체 화면 ---------- */
 const fsEl = document.documentElement;
-const canFS = !!(fsEl.requestFullscreen || fsEl.webkitRequestFullscreen);
+/* 홈 화면에 추가해 앱으로 열었으면 이미 전체 화면: 브라우저 전체 화면(안내 띠가 뜨는 방식)은 쓰지 않음 */
+const asApp = matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches || navigator.standalone === true;
+const canFS = !asApp && !!(fsEl.requestFullscreen || fsEl.webkitRequestFullscreen);
 const isFS = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
 function enterFS(){
   try {
@@ -898,6 +900,11 @@ async function setMotion(m){
   dirty = true;
 }
 motionSeg.addEventListener('click', e => { const b = e.target.closest('button'); if (b) setMotion(b.dataset.v); });
+
+/* ---------- 앱으로 설치할 수 있게 ---------- */
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+}
 
 /* ---------- 시작 ---------- */
 const start = PRESETS.find(p => '#' + p.id === location.hash) || PRESETS[0];
