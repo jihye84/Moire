@@ -338,12 +338,10 @@ const K_INFO = {
   5:{label:'물결 길이', min:20, max:240, step:1, fmt:v=>Math.round(v)+'px'}
 };
 const PRESETS = [
-  {id:'lines', name:'비튼 줄무늬', type:'lines', d:7, duty:.5, ang:4, scale:1, ox:0, oy:0, k:0,
-   note:'평행선 두 장을 4°만 돌렸을 뿐인데 굵은 띠가 거의 수직으로 서요. 각도를 0에 가깝게 줄여 보세요. 띠가 화면보다 커집니다.'},
-  {id:'rings', name:'어긋난 과녁', type:'rings', d:8, duty:.5, ang:0, scale:1, ox:70, oy:0, k:0,
-   note:'동심원의 중심을 옆으로 옮기면 쌍곡선 모양의 띠가 생겨요. 화면을 끌어 중심을 움직여 보세요.'},
   {id:'spokes', name:'바퀴살 꽃', type:'spokes', d:8, duty:.5, ang:0, scale:1, ox:46, oy:24, k:180,
    note:'바퀴살 두 장의 중심을 어긋나게 하면 원과 꽃잎 같은 곡선이 피어나요. 살 개수를 바꾸면 꽃의 모양이 바뀝니다.'},
+  {id:'rings', name:'어긋난 과녁', type:'rings', d:8, duty:.5, ang:0, scale:1, ox:70, oy:0, k:0,
+   note:'동심원의 중심을 옆으로 옮기면 쌍곡선 모양의 띠가 생겨요. 화면을 끌어 중심을 움직여 보세요.'},
   {id:'hex', name:'육각 초격자', type:'hex', d:10, duty:.55, ang:5, scale:1, ox:0, oy:0, k:0,
    note:'육각 점무늬를 살짝 비틀면 훨씬 큰 육각 무늬가 생겨요. 그래핀 두 겹을 비틀 때 생기는 무늬와 같은 원리입니다.'},
   {id:'zone', name:'존 플레이트', type:'zone', d:8, duty:.5, ang:0, scale:1, ox:110, oy:0, k:18,
@@ -352,6 +350,8 @@ const PRESETS = [
    note:'물결치는 줄무늬 두 장이에요. 배율이 1%만 달라도 물결 위에 또 다른 물결이 흐릅니다.'},
   {id:'dots', name:'점 격자', type:'dots', d:9, duty:.5, ang:7, scale:1, ox:0, oy:0, k:0,
    note:'바둑판 점무늬를 돌리면 회전한 큰 바둑판이 생겨요. 특정 각도에서는 무늬가 갑자기 정리되는 순간이 옵니다.'},
+  {id:'lines', name:'비튼 줄무늬', type:'lines', d:7, duty:.5, ang:4, scale:1, ox:0, oy:0, k:0,
+   note:'평행선 두 장을 4°만 돌렸을 뿐인데 굵은 띠가 거의 수직으로 서요. 각도를 0에 가깝게 줄여 보세요. 띠가 화면보다 커집니다.'},
   {id:'zoom', name:'1% 확대', type:'lines', d:5, duty:.5, ang:0, scale:1.012, ox:0, oy:0, k:0,
    note:'회전 없이 위 필름만 1.2% 키웠어요. 평행한 띠가 생기고, 배율이 1에 가까울수록 띠 간격이 커집니다.'}
 ];
