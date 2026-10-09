@@ -153,16 +153,6 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:0}
   .adjbtn{min-width:60px;padding:0 10px}
   .drawer{left:10px;right:10px;width:auto;top:auto;bottom:calc(var(--dockH) + 8px);max-height:calc(100% - var(--dockH) - var(--plateB) - 18px)}
 }
-/* 낮고 넓은 화면(가로 폰, 작은 창): 서랍을 두 칸으로 */
-@media (min-width:700px) and (max-height:620px){
-  .drawer{width:min(620px,calc(100% - 32px));top:calc(var(--plateB) + 10px);max-height:calc(100% - var(--dockH) - var(--plateB) - 22px)}
-  .dw{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:20px}
-  .pre canvas{max-height:36px}
-}
-@media (max-width:699px) and (max-height:700px){
-  .dw{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:14px}
-  .row{grid-template-columns:38px minmax(0,1fr);gap:6px}
-}
 @media (max-height:460px){
   .dw{padding:10px 12px 12px;row-gap:8px}
   .grp{gap:6px}
@@ -179,7 +169,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:0}
 .infob{font-family:var(--f-display);color:var(--fg)}
 .dock{transition:transform .35s ease}
 body.bare .dock{transform:translateY(calc(100% + 2px));pointer-events:none}
-body.bare .hint{opacity:0}
+body.bare .hint,body.dopen .hint{opacity:0}
 .toast{position:fixed;left:50%;bottom:calc(var(--dockH) + 14px + var(--sb));transform:translateX(-50%);z-index:9;background:var(--glass);color:#d4cec2;font-size:12.5px;padding:7px 12px;border-radius:999px;pointer-events:none;opacity:0;transition:opacity .4s;white-space:nowrap}
 .toast.on{opacity:1}
 @media (prefers-reduced-motion:reduce){.hint,.dock,.label,.toast{transition:none}}
@@ -192,7 +182,7 @@ body.bare .hint{opacity:0}
 body.noinfo .label{display:none}
 .dock{left:50%;right:auto;width:auto;max-width:calc(100% - 24px);bottom:calc(10px + var(--sb));padding:6px;border:1px solid var(--hair);border-radius:12px;transform:translateX(-50%)}
 .dock-in{display:flex;gap:6px;width:auto;max-width:none}
-.dock .adjbtn{min-width:62px;min-height:50px;padding:4px 10px;font-size:12px;gap:2px}
+.dock .adjbtn{min-width:58px;min-height:50px;padding:4px 10px;font-size:12px;gap:2px}
 .dock .adjbtn svg{width:19px;height:19px}
 .adjbtn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
 body.bare .dock{transform:translate(-50%,calc(100% + 30px))}
@@ -201,17 +191,31 @@ body.bare .label{opacity:.86}
 .drawer .pre canvas{max-height:44px}
 .drawer .pre span{font-size:11.5px}
 .row{grid-template-columns:44px minmax(0,1fr)}
+/* ---- 두 서랍: 무늬(고르기) · 조절(슬라이더) ---- */
+#drawerA{width:360px}
+#drawerA .dw{gap:2px;padding:10px 14px 12px}
+#drawerA .row{min-height:36px}
+.dw-head h2{font-size:16px}
 @media (max-height:700px){
   .drawer .pre span{display:none}
-  .drawer .pre canvas{max-height:34px}
+  .drawer .pre canvas{max-height:32px}
   .dw{row-gap:10px}
 }
 @media (min-width:700px) and (max-height:620px){
-  .drawer{width:min(940px,calc(100% - 32px))}
-  .dw{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .drawer{top:calc(var(--plateB) + 10px);max-height:calc(100% - var(--dockH) - var(--plateB) - 22px)}
+  #drawerP{width:min(640px,calc(100% - 32px))}
+  #drawerP .dw{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:18px}
 }
-@media (max-width:699px) and (min-width:540px) and (max-height:620px){ .dw{grid-template-columns:repeat(3,minmax(0,1fr))} }
-@media (min-width:1000px) and (max-height:780px){ .drawer{width:620px} .dw{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:18px} }
+@media (max-width:699px){ #drawerA{width:auto} }
+@media (max-width:699px) and (max-height:700px){
+  #drawerP .dw{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:12px}
+}
+/* 슬라이더를 잡는 동안: 서랍이 비켜서 무늬 전체가 보이게 */
+.drawer{transition:background-color .2s,border-color .2s}
+.drawer .dw-head,.drawer .row{transition:opacity .2s}
+.drawer.peek{background:transparent;border-color:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+.drawer.peek .dw-head,.drawer.peek .row:not(.active){opacity:0}
+.drawer.peek .row.active label{text-shadow:0 0 3px #000,0 0 8px #000}
 @media (max-height:460px){ .drawer .pre canvas{max-height:28px} .dock .adjbtn{min-height:40px} }
 </style>
 </head>
@@ -235,7 +239,11 @@ body.bare .label{opacity:.86}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 6h14M5 12h9M5 18h11"/></svg>
       <span>정보</span>
     </button>
-    <button class="adjbtn" id="bAdj" aria-expanded="false" aria-controls="drawer">
+    <button class="adjbtn" id="bPat" aria-expanded="false" aria-controls="drawerP">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="12" r="5.5"/><circle cx="14.5" cy="12" r="5.5"/></svg>
+      <span>무늬</span>
+    </button>
+    <button class="adjbtn" id="bAdj" aria-expanded="false" aria-controls="drawerA">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
       <span>조절</span>
     </button>
@@ -250,9 +258,9 @@ body.bare .label{opacity:.86}
   </div>
 </nav>
 
-<aside class="drawer" id="drawer" aria-label="조절" hidden>
-  <div class="dw" id="dw">
-    <div class="dw-head"><h2>조절</h2><span class="hbtns"><button class="closebtn infob" id="bInfo2" aria-expanded="false" aria-controls="sheet" aria-label="이 무늬 설명 보기">i</button><button class="closebtn" id="bAdjClose" aria-label="조절 닫기">×</button></span></div>
+<aside class="drawer" id="drawerP" aria-label="무늬" hidden>
+  <div class="dw" id="dwP">
+    <div class="dw-head"><h2>무늬</h2><span class="hbtns"><button class="closebtn infob" id="bInfo2" aria-expanded="false" aria-controls="sheet" aria-label="이 무늬 설명 보기">i</button><button class="closebtn" id="bPatClose" aria-label="무늬 서랍 닫기">×</button></span></div>
     <div class="grp">
       <div class="lab">무아레 종류</div>
       <div class="presets" id="presets"></div>
@@ -276,14 +284,17 @@ body.bare .label{opacity:.86}
         <button data-v="still">정지</button>
       </div>
     </div>
-    <div class="grp">
-      <div class="lab">위 필름</div>
-      <div class="row"><label for="sAng">회전</label><input type="range" id="sAng" min="-45" max="45" step="0.05"></div>
-      <div class="row"><label for="sScale">배율</label><input type="range" id="sScale" min="0.9" max="1.1" step="0.001"></div>
-      <div class="row"><label for="sD">간격</label><input type="range" id="sD" min="3" max="30" step="0.1"></div>
-      <div class="row"><label for="sDuty">굵기</label><input type="range" id="sDuty" min="0.1" max="0.9" step="0.01"></div>
-      <div class="row" id="rowK"><label for="sK" id="lK">세부</label><input type="range" id="sK" min="0" max="1" step="0.01"></div>
-    </div>
+  </div>
+</aside>
+
+<aside class="drawer" id="drawerA" aria-label="조절" hidden>
+  <div class="dw" id="dwA">
+    <div class="dw-head"><h2>위 필름 조절</h2><button class="closebtn" id="bAdjClose" aria-label="조절 서랍 닫기">×</button></div>
+    <div class="row"><label for="sAng">회전</label><input type="range" id="sAng" min="-45" max="45" step="0.05"></div>
+    <div class="row"><label for="sScale">배율</label><input type="range" id="sScale" min="0.9" max="1.1" step="0.001"></div>
+    <div class="row"><label for="sD">간격</label><input type="range" id="sD" min="3" max="30" step="0.1"></div>
+    <div class="row"><label for="sDuty">굵기</label><input type="range" id="sDuty" min="0.1" max="0.9" step="0.01"></div>
+    <div class="row" id="rowK"><label for="sK" id="lK">세부</label><input type="range" id="sK" min="0" max="1" step="0.01"></div>
   </div>
 </aside>
 
@@ -641,23 +652,41 @@ bInfoTog.addEventListener('click', () => {
 });
 
 /* ---------- 서랍 ---------- */
-const drawer = $('drawer'), bAdj = $('bAdj'), sheet = $('sheet'), scrim = $('scrim'), bInfo = $('bInfo2');
-function setDrawer(open){
-  drawer.hidden = !open; bAdj.setAttribute('aria-expanded', open ? 'true' : 'false'); document.body.classList.toggle('dopen', open);
-  if (open) { setSheet(false); fitAll(); }
+const drawerP = $('drawerP'), drawerA = $('drawerA'), bPat = $('bPat'), bAdj = $('bAdj');
+const sheet = $('sheet'), scrim = $('scrim'), bInfo = $('bInfo2');
+const drawer = {get hidden(){ return drawerP.hidden && drawerA.hidden; }};
+function openDrawer(which){
+  drawerP.hidden = which !== 'p'; drawerA.hidden = which !== 'a';
+  bPat.setAttribute('aria-expanded', which === 'p' ? 'true' : 'false');
+  bAdj.setAttribute('aria-expanded', which === 'a' ? 'true' : 'false');
+  document.body.classList.toggle('dopen', !!which);
+  if (which) { setSheet(false); fitAll(); }
 }
+function setDrawer(open){ openDrawer(open ? 'p' : null); }
 function setSheet(open){
   sheet.hidden = !open; scrim.hidden = !open; bInfo.setAttribute('aria-expanded', open ? 'true' : 'false');
   if (open) { fitAll(); $('bInfoClose').focus(); }
 }
-bAdj.addEventListener('click', () => setDrawer(drawer.hidden));
-$('bAdjClose').addEventListener('click', () => { setDrawer(false); bAdj.focus(); });
+bPat.addEventListener('click', () => openDrawer(drawerP.hidden ? 'p' : null));
+bAdj.addEventListener('click', () => openDrawer(drawerA.hidden ? 'a' : null));
+$('bPatClose').addEventListener('click', () => { openDrawer(null); bPat.focus(); });
+$('bAdjClose').addEventListener('click', () => { openDrawer(null); bAdj.focus(); });
 $('bInfoClose').addEventListener('click', () => { setSheet(false); bInfo.focus(); });
 scrim.addEventListener('click', () => setSheet(false));
 bInfo.addEventListener('click', () => setSheet(true));
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  if (!sheet.hidden) setSheet(false); else if (!drawer.hidden) setDrawer(false);
+  if (!sheet.hidden) setSheet(false); else if (!drawer.hidden) openDrawer(null);
+});
+
+/* 슬라이더를 잡는 동안 서랍이 비켜서 무늬 전체가 보이게 */
+document.addEventListener('pointerup', () => { drawerA.classList.remove('peek'); drawerA.querySelectorAll('.row.active').forEach(r => r.classList.remove('active')); }, true);
+Object.values(sl).forEach(inp => {
+  const row = inp.closest('.row');
+  const on = () => { row.classList.add('active'); drawerA.classList.add('peek'); };
+  const off = () => { row.classList.remove('active'); drawerA.classList.remove('peek'); };
+  inp.addEventListener('pointerdown', on);
+  ['pointerup','pointercancel','blur','change'].forEach(ev => inp.addEventListener(ev, off));
 });
 
 /* 어떤 창 크기에서도 스크롤이 생기지 않게: 넘치면 서랍 내용을 살짝 줄임 */
@@ -674,7 +703,7 @@ function fitAll(){
   const dh = document.body.classList.contains('bare') ? 0 : Math.max(0, innerHeight - dr.top);
   root.style.setProperty('--dockH', Math.ceil(dh) + 'px');
   root.style.setProperty('--plateB', Math.ceil(document.querySelector('.label').getBoundingClientRect().bottom) + 'px');
-  fit(drawer, $('dw')); fit(sheet, $('sh'));
+  fit(drawerP, $('dwP')); fit(drawerA, $('dwA')); fit(sheet, $('sh'));
 }
 new ResizeObserver(fitAll).observe($('dock'));
 window.addEventListener('resize', fitAll);
@@ -882,7 +911,6 @@ else {                                   /* 아이폰: 처음 화면을 만질 �
     if (S.motion === 'tilt' && !tilt.on) setMotion('tilt');
   }, true);
 }
-if (innerWidth >= 1100 && innerHeight >= 700) setDrawer(true);
 fitAll();
 requestAnimationFrame(loop);
 
