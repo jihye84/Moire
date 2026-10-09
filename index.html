@@ -217,6 +217,16 @@ body.bare .label{opacity:.86}
 .drawer.peek .dw-head,.drawer.peek .row:not(.active){opacity:0}
 .drawer.peek .row.active label{text-shadow:0 0 3px #000,0 0 8px #000}
 @media (max-height:460px){ .drawer .pre canvas{max-height:28px} .dock .adjbtn{min-height:40px} }
+
+/* 정보 글자: 금빛 + 또렷한 검은 테두리 (밝은 무늬·어두운 무늬 어디서나 읽히게) */
+.label{color:#f6c768;opacity:1;
+  text-shadow:
+    -1.5px -1.5px 0 #070a12, 1.5px -1.5px 0 #070a12, -1.5px 1.5px 0 #070a12, 1.5px 1.5px 0 #070a12,
+    0 -1.5px 0 #070a12, 0 1.5px 0 #070a12, -1.5px 0 0 #070a12, 1.5px 0 0 #070a12,
+    0 0 6px rgba(7,10,18,.9)}
+.label .nm{color:#f6c768;font-weight:700}
+.label .nums{color:#ffe7b0;opacity:1;font-weight:500;text-shadow:inherit}
+body.bare .label{opacity:1}
 </style>
 </head>
 <body>
